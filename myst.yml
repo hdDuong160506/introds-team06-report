@@ -1,0 +1,20 @@
+version: 1
+
+project:
+  title: Introduction to Data Science — arXiv Project
+  toc:
+    - file: index.md
+
+    - file: milestone1/index.md
+      title: Milestone 1 — Data Crawling
+      children:
+        - file: milestone1/implementation.md
+
+    - file: milestone2/index.md
+      title: Milestone 2 — Parsing & Standardization
+      children:
+        - file: milestone2/hierarchical_parsing.md
+        - file: milestone2/standardization.md
+
+site:
+  template: book-theme
