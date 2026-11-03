@@ -1,4 +1,4 @@
-# Milestone 2 — Hierarchical Parsing & Standardization
+# Milestone 2: Hierarchical Parsing & Standardization
 
 ## Objective
 

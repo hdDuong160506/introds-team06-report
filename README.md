@@ -1,4 +1,4 @@
-# IntroDS — Báo cáo đồ án arXiv
+# IntroDS: Báo cáo đồ án arXiv
 
 Project chứa báo cáo môn Nhập môn Khoa học dữ liệu, viết bằng Markdown/Jupyter Notebook và dựng thành website bằng **Jupyter Book 2 (MyST)**.
 
@@ -77,7 +77,7 @@ Nếu thêm trang mới, khai báo trang trong `project.toc` của `myst.yml` đ
 
 ```yaml
     - file: milestone1/index.md
-      title: Milestone 1 — Data Crawling
+      title: "Milestone 1: Data Crawling"
       children:
         - file: milestone1/implementation.md
         - file: milestone1/new_section.md
@@ -128,4 +128,4 @@ Ngày **29/10/2026**:
 - Website local tại `http://localhost:3000` trả về HTTP **200**.
 - Báo cáo hiện chủ yếu là khung đề mục, chưa có nội dung kỹ thuật và số liệu đầy đủ.
 
-Tài liệu tham khảo: [Jupyter Book 2 — Get started with websites](https://jupyterbook.org/stable/build-and-publish/website/).
+Tài liệu tham khảo: [Jupyter Book 2: Get started with websites](https://jupyterbook.org/stable/build-and-publish/website/).

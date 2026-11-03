@@ -1,4 +1,4 @@
-# Milestone 1 — Data Crawling
+# Milestone 1: Data Crawling
 
 ## Objective
 
