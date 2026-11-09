@@ -44,6 +44,12 @@ jobs:
       - name: Install Jupyter Book
         run: python -m pip install "jupyter-book==2.1.7"
 
+      - name: Execute report tables during compilation
+        run: >-
+          python -m jupyter nbconvert --to notebook --execute --inplace
+          --ExecutePreprocessor.timeout=120
+          milestone1/statistics.ipynb milestone1/performance.ipynb
+
       - name: Build report as static HTML
         run: jupyter-book build --html
 

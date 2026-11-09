@@ -1,18 +1,20 @@
-# Implementation
+# arXiv Crawler Implementation
 
 ## Overview
 
-This section describes the arXiv crawler implemented in the supplied
-`Hieu_code.zip` snapshot. It collects publication metadata and the source of
+This section describes the arXiv crawler in the supplied
+`arXir_project-main.zip` snapshot, together with Hieu's updated technical
+document reviewed on 9 November 2026. It collects publication metadata and the source of
 every identified version within the assigned ID ranges. Its outputs support
 Milestone 2 and the subsequent integration of reference metadata.
 
 The standalone entry point is `src/m1_crawling/run_arxiv_only.py`. It avoids
 unfinished shared modules and can run independently of the complete M1
 pipeline. The description below follows the implemented functions rather than
-the older skeleton README. Final crawl statistics and benchmark results remain
-pending; implementation details alone do not establish collection success or
-performance improvements.
+the older skeleton README. Document-reported results are presented in
+[Statistics](statistics.ipynb) and [Performance](performance.ipynb). The underlying
+run exports are pending reconciliation; implementation details alone do not
+establish collection success or performance improvements.
 
 ## Processing Pipeline
 
@@ -167,7 +169,8 @@ The extractor rejects unsafe relative paths, skips symbolic links and limits
 archive processing. The configured limits are:
 
 - Downloaded archive: **400 MiB**.
-- Individual extracted file: **32 MiB**.
+- Individual extracted file: **64 MiB** in the latest supplied code (32 MiB in
+  the earlier snapshot).
 - Total extracted content per source archive: **120 MiB**.
 - Archive members examined: at most **5,000**.
 
@@ -182,6 +185,8 @@ limit violation is recorded as a processing error, not a successful extraction.
 thread has its own `requests.Session`. The CLI defaults to a **3.1-second**
 scheduling interval and rejects a configured interval below **3 seconds**.
 Connection timeout is **15 seconds** and the default read timeout is **90 seconds**.
+The updated `_pace()` rechecks the monotonic deadline after sleeping, accounting
+for clock granularity rather than assuming that one sleep reaches the deadline.
 
 The client retries network exceptions during request establishment and HTTP
 `429`, `500`, `502`, `503` and `504`. It uses increasing waits and parses
@@ -210,7 +215,9 @@ scheduling intervals must not be described as a guarantee of a single active
 connection. The [arXiv API terms](https://info.arxiv.org/help/api/tou.html) also
 require a single connection for legacy API access; the concurrent configuration
 must be reviewed against that restriction before claiming full compliance.
-The ZIP provides no measured speedup for this configuration.
+The supplied notebooks use three workers, while the document describes a
+single active connection. The actual worker configuration behind each reported
+run is pending confirmation. No measured concurrent speedup is established.
 
 Although the help text describes 1--4 workers, the CLI validation currently
 checks only that the number is positive. Four is not an enforced upper bound.
@@ -358,8 +365,10 @@ For interpretation:
   uncompressed size of retained files; their ratio is not an equal-compression
   comparison of storage reduction.
 
-No final counts, success rates, storage reductions or speedups are asserted
-until run outputs are available. Final M1 benchmarking must additionally cover
+The [Performance](performance.ipynb) page includes the time and checkpoint sizes
+reported in the updated document, with their measurement scope and rounding
+discrepancies. RAM, discovery time, version coverage and equal-basis source-size
+comparisons remain pending where no results were supplied. Final M1 benchmarking must additionally cover
 the reference crawler and other integration steps on Google Colab CPU-only, as
 specified in the [milestone requirements](https://hcmus-cs-ta.github.io/lab-book/intro-ds/statement/crawling/).
 
@@ -383,6 +392,8 @@ claimed here.
 
 ## Semantic Scholar Reference Collection
 
-This subsection will be completed separately when the reference crawler's
-implementation and results are reviewed. The arXiv outputs described above are
-its upstream publication inputs; no reference-crawling result is reported here.
+The arXiv metadata checkpoints feed the separate
+[Semantic Scholar crawler](semantic_scholar.md). Its reference collection,
+normalization, cache behavior, table construction and current limitations are
+described on that page. Combined document-reported results are available in
+[Statistics](statistics.ipynb) and [Performance](performance.ipynb).

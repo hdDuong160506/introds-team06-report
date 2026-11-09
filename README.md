@@ -87,7 +87,16 @@ Nếu thêm trang mới, khai báo trang trong `project.toc` của `myst.yml` đ
 
 ## 5. Kiểm tra build nội dung
 
-Để kiểm tra việc dựng các trang mà không cần khởi động website:
+M1 hiện có notebook Statistics và Performance. Các bảng được tính từ file
+`milestone1/data/reported_results.json`, chứa số liệu tổng hợp theo document
+của Hiếu và Đạt. Trước khi preview hoặc build, thực thi hai notebook:
+
+```powershell
+.\.venv\Scripts\python.exe -m jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.timeout=120 milestone1/statistics.ipynb milestone1/performance.ipynb
+```
+
+Lệnh này chỉ tính bảng từ dữ liệu báo cáo local, không chạy crawler hay gọi API.
+Sau đó kiểm tra việc dựng các trang mà không cần khởi động website:
 
 ```powershell
 .\.venv\Scripts\jupyter-book.exe build --site
@@ -117,7 +126,10 @@ Kiểm tra đường dẫn trang trong `myst.yml`, lưu file và khởi động 
 
 ### Lỗi khi mở hoặc build notebook
 
-Hiện 4 file `statistics.ipynb` và `performance.ipynb` của M1/M2 đều là file trống **0 byte**, chưa phải notebook hợp lệ và chưa được đưa vào mục lục. Cần tạo notebook hợp lệ bằng trình soạn thảo Jupyter trong VS Code trước khi viết nội dung hoặc thêm chúng vào `myst.yml`.
+Hai notebook M1 đã có nội dung và được đưa vào mục lục. Nếu bảng chưa hiện,
+thực thi notebook theo phần 5 rồi chạy lại website. Hai notebook M2 vẫn trống
+**0 byte**, chưa phải notebook hợp lệ và chưa được đưa vào mục lục; cần tạo
+notebook hợp lệ trước khi sử dụng chúng.
 
 ## 7. Trạng thái đã kiểm tra
 
@@ -127,5 +139,12 @@ Ngày **29/10/2026**:
 - Lệnh `start --port 3000` build được **6 trang** trong mục lục hiện tại.
 - Website local tại `http://localhost:3000` trả về HTTP **200**.
 - Báo cáo hiện chủ yếu là khung đề mục, chưa có nội dung kỹ thuật và số liệu đầy đủ.
+
+Cập nhật **09/11/2026**:
+
+- Bổ sung implementation arXiv và Semantic Scholar, Statistics và Performance M1.
+- Build HTML được 9 trang; hai notebook tạo tổng cộng 10 bảng từ số liệu đã cung cấp.
+- GitHub Actions thực thi notebook trước khi build để tạo bảng trong quá trình
+  compilation. Số liệu còn được ghi rõ là từ document, đang chờ đối chiếu output gốc.
 
 Tài liệu tham khảo: [Jupyter Book 2: Get started with websites](https://jupyterbook.org/stable/build-and-publish/website/).

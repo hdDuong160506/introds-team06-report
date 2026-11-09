@@ -1,0 +1,37 @@
+{
+  "reviewed_on": "2026-11-09",
+  "provenance": {
+    "arxiv": "Hieu.docx, updated technical report, Section 5; aggregates transcribed from the supplied document, not independently verified run exports.",
+    "semantic_scholar": "Dat.docx, updated technical report, Section 5; aggregates transcribed from the supplied document, not independently verified run exports.",
+    "code": "arXir_project-main.zip supplied by the group",
+    "environment": "Google Colab CPU-only as reported in the technical documents; exact run configurations pending confirmation."
+  },
+  "arxiv": {
+    "reported_overall": {
+      "fast_hms": "29:33:32",
+      "recovery_hms": "32:08:13",
+      "total_hms": "61:41:45",
+      "checkpoint_mib": 1360.67
+    },
+    "ranges": [
+      {"range": 1, "assigned": 5000, "metadata": 5000, "batches": 100, "ok": 4836, "error": 5, "no_tex": 159, "not_found": 0, "fast_hms": "05:09:35", "recovery_hms": "02:29:55", "total_hms": "07:39:30", "checkpoint_mib": 237.15},
+      {"range": 2, "assigned": 5000, "metadata": 5000, "batches": 100, "ok": 4722, "error": 6, "no_tex": 272, "not_found": 0, "fast_hms": "05:04:25", "recovery_hms": "07:01:19", "total_hms": "12:05:43", "checkpoint_mib": 279.88},
+      {"range": 3, "assigned": 5000, "metadata": 5000, "batches": 100, "ok": 4733, "error": 4, "no_tex": 263, "not_found": 0, "fast_hms": "06:38:31", "recovery_hms": "08:35:13", "total_hms": "15:13:44", "checkpoint_mib": 291.45},
+      {"range": 4, "assigned": 5000, "metadata": 5000, "batches": 100, "ok": 4684, "error": 3, "no_tex": 313, "not_found": 0, "fast_hms": "06:03:45", "recovery_hms": "01:57:31", "total_hms": "08:01:16", "checkpoint_mib": 264.14},
+      {"range": 5, "assigned": 5000, "metadata": 5000, "batches": 100, "ok": 4720, "error": 4, "no_tex": 276, "not_found": 0, "fast_hms": "06:37:17", "recovery_hms": "12:04:16", "total_hms": "18:41:33", "checkpoint_mib": 288.05}
+    ]
+  },
+  "semantic_scholar": {
+    "ranges": [
+      {"range": 1, "input_papers": 5000, "ok": 4999, "not_indexed": 1, "failed": 0, "invalid_id": 0, "api_errors": 0, "zero_refs": 480, "cache_hits": 4967, "refs_total": 163950, "refs_with_arxiv": 92152, "validation_references": 92152, "validation_issues": 0, "fetch_seconds": 64.72, "cell_seconds": 889.68, "reported_mean_fetch_seconds": 1.961, "average_rss_mib": 265.57, "peak_rss_mib": 265.60},
+      {"range": 2, "input_papers": 5000, "ok": 4995, "not_indexed": 5, "failed": 0, "invalid_id": 0, "api_errors": 0, "zero_refs": 301, "cache_hits": 4926, "refs_total": 184364, "refs_with_arxiv": 87850, "validation_references": 87850, "validation_issues": 0, "fetch_seconds": 122.53, "cell_seconds": 132.18, "reported_mean_fetch_seconds": 1.656, "average_rss_mib": 269.21, "peak_rss_mib": 269.21},
+      {"range": 3, "input_papers": 5000, "ok": 4995, "not_indexed": 5, "failed": 0, "invalid_id": 0, "api_errors": 0, "zero_refs": 354, "cache_hits": 4927, "refs_total": 183550, "refs_with_arxiv": 89978, "validation_references": 89978, "validation_issues": 0, "fetch_seconds": 101.26, "cell_seconds": 112.59, "reported_mean_fetch_seconds": 1.387, "average_rss_mib": 257.37, "peak_rss_mib": 257.37},
+      {"range": 4, "input_papers": 5000, "ok": 4995, "not_indexed": 5, "failed": 0, "invalid_id": 0, "api_errors": 0, "zero_refs": 465, "cache_hits": 4995, "refs_total": 177333, "refs_with_arxiv": 84609, "validation_references": 84609, "validation_issues": 1, "fetch_seconds": 1.35, "cell_seconds": 1411.08, "reported_mean_fetch_seconds": 0.271, "average_rss_mib": 268.13, "peak_rss_mib": 268.14},
+      {"range": 5, "input_papers": 5000, "ok": 4996, "not_indexed": 4, "failed": 0, "invalid_id": 0, "api_errors": 0, "zero_refs": 281, "cache_hits": 4996, "refs_total": 193120, "refs_with_arxiv": 95001, "validation_references": 95001, "validation_issues": 1, "fetch_seconds": 3.03, "cell_seconds": 13.80, "reported_mean_fetch_seconds": 0.758, "average_rss_mib": 246.29, "peak_rss_mib": 246.29}
+    ],
+    "validation_details": [
+      {"range": 4, "table": "references", "reported_index": 24532, "field": "ref_authors", "problem": "empty list"},
+      {"range": 5, "table": "references", "reported_index": 93254, "field": "ref_authors", "problem": "empty list"}
+    ]
+  }
+}

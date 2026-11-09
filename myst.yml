@@ -9,6 +9,13 @@ project:
       title: "Milestone 1: Data Crawling"
       children:
         - file: milestone1/implementation.md
+          title: arXiv Crawler
+        - file: milestone1/semantic_scholar.md
+          title: Semantic Scholar References
+        - file: milestone1/statistics.ipynb
+          title: Statistics
+        - file: milestone1/performance.ipynb
+          title: Performance
 
     - file: milestone2/index.md
       title: "Milestone 2: Parsing & Standardization"
