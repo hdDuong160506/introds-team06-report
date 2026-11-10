@@ -8,10 +8,9 @@ document reviewed on 9 November 2026. It collects publication metadata and the s
 every identified version within the assigned ID ranges. Its outputs support
 Milestone 2 and the subsequent integration of reference metadata.
 
-The standalone entry point is `src/m1_crawling/run_arxiv_only.py`. It avoids
-unfinished shared modules and can run independently of the complete M1
-pipeline. The description below follows the implemented functions rather than
-the older skeleton README. Document-reported results are presented in
+The standalone entry point is `src/m1_crawling/run_arxiv_only.py`. It can run
+independently of reference collection. The description below follows the
+implemented functions in the reviewed snapshot. Document-reported results are presented in
 [Statistics](statistics.ipynb) and [Performance](performance.ipynb). The underlying
 run exports are pending reconciliation; implementation details alone do not
 establish collection success or performance improvements.
@@ -33,6 +32,23 @@ Batches run sequentially. Within a batch, publications can be processed
 sequentially or by multiple workers. Each publication's versions are processed
 sequentially. Results are reordered to match the input IDs before being written,
 regardless of worker completion order.
+
+### Design Rationale
+
+- Batched metadata lookup limits repeated API calls. Streaming and selective
+  extraction limit the data held at once and retain the source files used by M2.
+- Source bytes and relative paths are preserved so that later parsing can
+  follow the original document structure. A version without retained sources
+  still receives a record, keeping absence visible in coverage statistics.
+- Checkpoints and targeted Recovery let work continue after interruptions.
+  Their runtime/storage costs are measured separately in the available results;
+  a claimed speedup would require a comparable experiment.
+
+> **Pending evidence S1 and P1.** The method enumerates versions, but final
+> version counts, source-status reasons and the actual configurations behind
+> the reported runs still need the owners' exports. The discussion below
+> describes the reviewed snapshot, including limitations that have not yet been
+> confirmed as corrected.
 
 ## Assigned IDs and Batching
 

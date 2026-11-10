@@ -22,6 +22,25 @@ arXiv batch checkpoints
     -> filter arXiv-bearing references, deduplicate and validate tables
 ```
 
+## Design Rationale and Result Scope
+
+Reference lookup operates at publication level because M1's reference table
+associates each cited work with a citing base arXiv ID. Using arXiv metadata as
+input keeps the two stages connected without downloading sources a second time.
+Keeping references without arXiv IDs locally preserves the collected metadata,
+while the published matching pool uses the arXiv-bearing subset.
+
+Per-publication caches provide resumability. They also change how a rerun must
+be evaluated: accepted saved records, fresh lookup outcomes and fresh HTTP
+attempts are different quantities. The results pages use those distinctions
+when presenting status rates and timing.
+
+> **Pending evidence S3.** Payload validation and notebook request pacing are
+> corrections requested from the owner. The original per-publication exports
+> and the two author-list findings are awaiting reconciliation. Existing counts
+> remain attributed to the supplied documents; this report does not claim that
+> the requested fixes have already been implemented.
+
 ## Loading arXiv Checkpoints
 
 The notebook discovers `batch_*.json` markers and opens the corresponding

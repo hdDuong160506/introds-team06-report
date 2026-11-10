@@ -160,3 +160,14 @@ Tài liệu tham khảo: [Jupyter Book 2: Get started with websites](https://jup
   website. Không dùng ảnh chụp bảng từ tài liệu.
 - Giữ rõ nguồn số liệu document và giới hạn của các lần chạy dùng cache;
   chờ đối chiếu file kết quả gốc trước khi kết luận benchmark đầy đủ.
+
+
+### Phân tích và phần chờ cập nhật (10/11/2026)
+
+- M1 Statistics và Performance được tổ chức theo câu hỏi, kết quả quan sát,
+  ý nghĩa và giới hạn; nhận xét có số liệu được tính từ cùng dữ liệu với biểu đồ.
+- Các nhãn S1--S4 và P1--P4 chỉ rõ dữ liệu còn thiếu, bao gồm kích thước nguồn
+  trung bình trước/sau lọc và benchmark toàn M1. S4 là phân tích bổ sung khi có
+  record từng bài; các phép đo bắt buộc còn thiếu vẫn được đánh dấu chưa đủ.
+- Để cập nhật, đối chiếu export gốc và phạm vi đo, sửa dữ liệu/nội dung liên quan,
+  rồi thực thi lại notebook theo phần 5. Không điền số 0 cho phép đo chưa có.
