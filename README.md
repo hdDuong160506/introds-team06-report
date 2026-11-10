@@ -34,7 +34,7 @@ Cần cài Python trước; môi trường hiện tại của project dùng **Py
 cd C:\1_HDD\IntroDS_Report
 python --version
 python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install "jupyter-book==2.1.7"
+.\.venv\Scripts\python.exe -m pip install -r requirements-report.txt
 .\.venv\Scripts\jupyter-book.exe --version
 .\.venv\Scripts\jupyter-book.exe start --port 3000
 ```
@@ -87,7 +87,7 @@ Nếu thêm trang mới, khai báo trang trong `project.toc` của `myst.yml` đ
 
 ## 5. Kiểm tra build nội dung
 
-M1 hiện có notebook Statistics và Performance. Các bảng được tính từ file
+M1 hiện có notebook Statistics và Performance. Các biểu đồ và bảng được tạo bằng code từ file
 `milestone1/data/reported_results.json`, chứa số liệu tổng hợp theo document
 của Hiếu và Đạt. Trước khi preview hoặc build, thực thi hai notebook:
 
@@ -95,7 +95,9 @@ của Hiếu và Đạt. Trước khi preview hoặc build, thực thi hai noteb
 .\.venv\Scripts\python.exe -m jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.timeout=120 milestone1/statistics.ipynb milestone1/performance.ipynb
 ```
 
-Lệnh này chỉ tính bảng từ dữ liệu báo cáo local, không chạy crawler hay gọi API.
+Lệnh này tạo biểu đồ và bảng từ dữ liệu báo cáo local, không chạy crawler hay gọi API.
+Các biểu đồ được xuất thêm thành PNG và SVG tại `_build/report-figures/`.
+Nếu môi trường cũ chưa có Matplotlib, chạy lại lệnh cài đặt ở phần 2.
 Sau đó kiểm tra việc dựng các trang mà không cần khởi động website:
 
 ```powershell
@@ -126,7 +128,7 @@ Kiểm tra đường dẫn trang trong `myst.yml`, lưu file và khởi động 
 
 ### Lỗi khi mở hoặc build notebook
 
-Hai notebook M1 đã có nội dung và được đưa vào mục lục. Nếu bảng chưa hiện,
+Hai notebook M1 đã có nội dung và được đưa vào mục lục. Nếu biểu đồ hoặc bảng chưa hiện,
 thực thi notebook theo phần 5 rồi chạy lại website. Hai notebook M2 vẫn trống
 **0 byte**, chưa phải notebook hợp lệ và chưa được đưa vào mục lục; cần tạo
 notebook hợp lệ trước khi sử dụng chúng.
@@ -148,3 +150,13 @@ Cập nhật **09/11/2026**:
   compilation. Số liệu còn được ghi rõ là từ document, đang chờ đối chiếu output gốc.
 
 Tài liệu tham khảo: [Jupyter Book 2: Get started with websites](https://jupyterbook.org/stable/build-and-publish/website/).
+
+### Cập nhật 10/11/2026
+
+- Statistics và Performance M1 trình bày chủ yếu bằng 8 biểu đồ Matplotlib,
+  kèm nhận xét và 5 bảng hỗ trợ tra cứu/đối chiếu.
+- Notebook tạo hình khi build và xuất bản PNG/SVG để có thể dùng lại.
+- GitHub Actions cài `requirements-report.txt`, thực thi notebook, rồi build
+  website. Không dùng ảnh chụp bảng từ tài liệu.
+- Giữ rõ nguồn số liệu document và giới hạn của các lần chạy dùng cache;
+  chờ đối chiếu file kết quả gốc trước khi kết luận benchmark đầy đủ.

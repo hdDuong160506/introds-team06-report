@@ -1,4 +1,4 @@
-"""Build-time tables from document-reported M1 aggregates, without API calls."""
+"""Build-time figures and tables from reported M1 aggregates, without API calls."""
 from decimal import Decimal
 from html import escape
 import json
@@ -51,6 +51,48 @@ def seconds(value):
 
 def hms(value):
     return f"{value // 3600:02d}:{value % 3600 // 60:02d}:{value % 60:02d}"
+
+
+COLORS = {
+    "blue": "#2563A6", "teal": "#008578", "orange": "#D98B00",
+    "red": "#BF3F49", "gray": "#94A3B8", "purple": "#7354A6",
+}
+
+
+def chart_style():
+    """Use a consistent, readable style for exported scientific figures."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    plt.rcParams.update({
+        "font.family": "DejaVu Sans", "font.size": 11,
+        "axes.titlesize": 12, "axes.titleweight": "bold",
+        "axes.labelsize": 11, "axes.spines.top": False,
+        "axes.spines.right": False, "axes.axisbelow": True,
+        "figure.facecolor": "white", "axes.facecolor": "white",
+        "savefig.facecolor": "white", "svg.fonttype": "none",
+    })
+    return plt
+
+
+def finish_figure(fig, name, description):
+    """Embed a generated PNG and also export PNG/SVG copies under _build."""
+    from io import BytesIO
+    import matplotlib.pyplot as plt
+    from IPython.display import Image, display
+
+    output = Path(__file__).resolve().parents[1] / "_build" / "report-figures"
+    output.mkdir(parents=True, exist_ok=True)
+    png = BytesIO()
+    fig.savefig(png, format="png", dpi=180, bbox_inches="tight")
+    (output / f"{name}.png").write_bytes(png.getvalue())
+    fig.savefig(output / f"{name}.svg", bbox_inches="tight",
+                metadata={"Title": name.replace("-", " "), "Description": description})
+    display(Image(data=png.getvalue(), width=960),
+            metadata={"image/png": {"alt": description}})
+    plt.close(fig)
 
 
 def table(headers, rows):

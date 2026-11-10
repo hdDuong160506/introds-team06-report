@@ -41,8 +41,10 @@ This milestone report includes:
 The current report uses the supplied code snapshot and the updated technical
 documents `Hieu.docx` and `Dat.docx`, reviewed on **9 November 2026**. Both
 documents report five ranges of 5,000 input IDs. Numeric aggregates have been
-transcribed into a small report data file; notebook code generates the tables
-and recomputes totals and ratios during book compilation.
+transcribed into a small report data file; notebook code generates the figures
+and supporting tables and recomputes totals and ratios during book compilation.
+Statistics and performance are presented primarily through charts, with their
+interpretation and measurement scope stated alongside each figure.
 
 These are document-reported results. Original per-range metrics, runtime
 ledgers, crawl records and validation exports have been requested for
