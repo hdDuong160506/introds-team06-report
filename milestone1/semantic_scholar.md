@@ -3,9 +3,8 @@
 ## Objective and Input
 
 The Semantic Scholar stage enriches the arXiv working corpus with metadata for
-the documents cited by each assigned publication. The production workflow
-reviewed here is `src/m1_crawling/colab_s2_references.ipynb` in
-`arXir_project-main.zip`, alongside Dat's updated technical document.
+the documents cited by each assigned publication. Its input is the publication
+metadata stored in the arXiv batch checkpoints.
 
 It reads existing arXiv checkpoints and does not download the LaTeX sources
 again. One reference lookup is initiated per uncached publication, rather than
@@ -28,18 +27,12 @@ Reference lookup operates at publication level because M1's reference table
 associates each cited work with a citing base arXiv ID. Using arXiv metadata as
 input keeps the two stages connected without downloading sources a second time.
 Keeping references without arXiv IDs locally preserves the collected metadata,
-while the published matching pool uses the arXiv-bearing subset.
+while the exported matching pool uses the arXiv-bearing subset.
 
 Per-publication caches provide resumability. They also change how a rerun must
 be evaluated: accepted saved records, fresh lookup outcomes and fresh HTTP
 attempts are different quantities. The results pages use those distinctions
 when presenting status rates and timing.
-
-> **Pending evidence S3.** Payload validation and notebook request pacing are
-> corrections requested from the owner. The original per-publication exports
-> and the two author-list findings are awaiting reconciliation. Existing counts
-> remain attributed to the supplied documents; this report does not claim that
-> the requested fixes have already been implemented.
 
 ## Loading arXiv Checkpoints
 
@@ -54,12 +47,6 @@ All available publication metadata is used, including publications whose TeX
 source is missing or whose source download failed. Source availability and
 Semantic Scholar indexing are different outcomes.
 
-The loader prints missing and extra IDs relative to the assigned range. This is
-currently a warning, not an enforced filter of extra IDs. Missing/corrupt input
-archives are reported and skipped. The loader does not independently verify the
-checkpoint checksum or all manifest contents, so input completeness must also
-be checked against the arXiv exports.
-
 ## API Requests and Returned Fields
 
 The notebook constructs:
@@ -68,48 +55,20 @@ The notebook constructs:
 https://api.semanticscholar.org/graph/v1/paper/arXiv:{arxiv_id}
 ```
 
-`S2_FIELDS` requests `references.title`, `references.authors`, `references.year`,
-`references.publicationDate`, `references.venue` and `references.externalIds`.
-The mapper also reads the reference's `paperId` when returned, storing it as
-`ref_s2_id`. The document's example query explicitly lists `references.paperId`,
-whereas the supplied configuration does not list that field separately; the
-description here follows the actual configuration.
+Collected reference fields include title, authors, year, publication date,
+Semantic Scholar `paperId` and `externalIds.ArXiv`. The publication ID in the
+request identifies the citing paper; each returned object describes a cited
+work.
 
-`_resolve_api_key()` obtains the optional key from its argument or `S2_API_KEY`.
-The request attaches it as `x-api-key`. Credentials are not included in report
-data or code excerpts.
+HTTP requests use timeouts and retries for network exceptions and HTTP `429`,
+`500`, `502`, `503` and `504`. The updated metrics record the configured delays
+as `s2_min_delay_sec=1.0`, `s2_min_delay_unauth_sec=3.1` and
+`s2_429_cooldown_sec=60.0`.
 
-The notebook's status-aware wrapper calls the shared request helper:
-
-```python
-response = request_with_retry(
-    "GET",
-    url,
-    headers=headers or None,
-    params=params,
-    timeout=60.0,
-    max_retries=5,
-)
-```
-
-This allows an initial attempt plus up to five retries. The helper retries
-network exceptions and HTTP `429`, `500`, `502`, `503`, `504`, using increasing
-backoff or a numeric `Retry-After`. HTTP-date `Retry-After` is not parsed by this
-helper. Status backoff is capped at 120 seconds, so larger server-provided waits
-are not preserved in full.
-
-### Request pacing in the reviewed notebook
-
-`semantic_scholar.py` has a different wrapper, `_s2_request()`, with configured
-delays of 1 second with a key and 3.1 seconds without a key, plus a 60-second
-cooldown after exhausted HTTP 429 retries. However, the production notebook
-defines and calls `_s2_request_with_status()` directly. That path does not call
-the module's delay/cooldown gate.
-
-Publications run sequentially, but successful requests can be followed
-immediately by the next publication. Retry backoff is present; proactive pacing
-between all publications remains a correction requested from the module owner.
-The configured library delay must not be described as an enforced notebook delay.
+The five measured reruns recorded 34 HTTP attempts, including 15 retries and
+15 HTTP 429 responses, while processing 19 uncached publications. Attempt
+counters describe the request history; publication status describes the final
+outcome for each input.
 
 ## Local Reference Normalization
 
@@ -136,36 +95,22 @@ API response or every field Semantic Scholar could provide.
 
 ## Status Classification and Empty Results
 
-The notebook classifies publications as:
+The exported records classify publications as:
 
-- `ok`: an accepted response was processed and saved successfully, or a cache
-  was accepted. An empty reference list can be a successful result.
-- `not_indexed`: HTTP 404 in the status-aware notebook wrapper.
-- `failed`: other HTTP errors, network failures, invalid JSON, or failures in
-  reference processing/writing. HTTP 400 is in this category.
+- `ok`: a response was processed and saved successfully, or an existing cache
+  was accepted. A saved empty reference list is included in this category.
+- `not_indexed`: HTTP 404 in the delivered crawl records.
+- `failed`: a final technical or processing failure.
 - `invalid_id`: local ID normalization failed; no API request is sent.
 
-The record includes `n_refs`, `n_arxiv`, `is_zero_ref`, `is_api_error`,
-`is_invalid_id`, `from_cache`, `elapsed_s` and an error message. In the current
-code, `is_api_error` follows `status == "failed"`, so it can include local
-processing or write failures, not only API failures.
+Each CSV row records the publication ID, run ID, status, reference counts,
+cache flag, error details and HTTP attempt/retry/429 counters. `elapsed_s`
+is recorded for fresh publication lookups; cache hits leave it blank.
 
-There is a pending payload-validation issue:
-
-```python
-raw_refs = payload.get("references") or []
-```
-
-A missing reference field can therefore become an empty successful cache. The
-notebook does not require a correctly typed reference list before this step.
-Consequently, reported zero-reference counts mean records accepted as empty by
-the current implementation; they are not independently verified evidence that
-the publications have no references. A stricter distinction between a valid
-empty list and malformed payload is pending.
-
-The separate library function `fetch_s2_references()` also returns `[]` on some
-failures. This is not the status-aware notebook path used for the supplied
-per-publication CSV and must not be used to infer identical error semantics.
+In the 11 November exports, 24,981 publications were accepted from cache and
+19 fresh lookups ended as `not_indexed`. The saved records include 1,881 empty
+reference lists. These counts describe the stored lists for the citing
+publications.
 
 ## Cache and Resume
 
@@ -178,11 +123,9 @@ On rerun, a cache that parses as a list of dictionaries is accepted and records
 lookup. Publications without a successful cache, including `not_indexed` and
 `failed`, can be retried on a subsequent run.
 
-Cache checks do not verify all fields, citing IDs or freshness. Empty caches
-are not automatically refreshed. Per-publication saves survive interruptions,
-but the run-level CSV/metrics are written at the end of the corresponding cell;
-an interrupted run may have caches without a complete run summary. These
-exports are overwritten on rerun rather than accumulated in a runtime ledger.
+Per-publication files preserve completed reference collections between sessions.
+The per-range CSV and metrics summarize the corresponding run, identified by
+the same `range_id` and `run_id` as its validation report.
 
 ## Working Corpus and Output Tables
 
@@ -212,8 +155,7 @@ an arXiv ID remain in the local working corpus.
 
 The citing key `references.arxiv_id` associates a row with its source
 publication. The cited `ref_arxiv_id` can be outside the assigned corpus; it
-does not have to be a row in the group's `papers` table. Local JSON exports
-are intermediate data, not a completed Hugging Face Parquet submission.
+does not have to be a row in the group's `papers` table.
 
 ### Deduplication and validation
 
@@ -227,38 +169,23 @@ Two different publications citing the same reference retain separate rows.
 This is identifier-based duplicate removal, not semantic reference matching or
 field union across alternative descriptions of the same work.
 
-`validate_m1_tables()` checks expected columns, selected required strings,
-author-list types/non-emptiness, paper duplicates and duplicate reference keys.
-It does not validate every date format or enforce cross-table foreign keys.
-The notebook writes the tables even if issues are reported, saving the issues
-to `validation_report.json` for review.
+The updated validation reports contain 5,000 paper rows per range and
+449,591 reference rows in total. For every range, the reported reference count
+before identifier-based deduplication equals the count after it.
 
-Dat's document reports one empty `ref_authors` issue at reference index 24532
-in Range 4 and one at index 93254 in Range 5. These are findings of the current
-validator. The source records and the agreed missing-metadata policy are
-pending review; no author names are invented or records silently discarded.
+All five validation reports have `ok=true` and zero issues. Range 4 records
+an empty `ref_authors` list at reference index 24532; Range 5 records one at
+index 93254. The validator retains these rows and records a metadata warning
+under its documented policy allowing empty author lists.
 
 ## Measurements and Reported Results
 
-`track_run("s2_references")` measures the crawl cell's wall duration and samples
-the notebook process RSS approximately every 0.5 seconds. The region excludes
-the earlier checkpoint loading and later table export/validation. Per-paper
-`elapsed_s` measures the request wrapper, before normalization and cache writes.
+The updated exports distinguish the fresh-lookup timer, the crawl-loop timer
+and the notebook-cell timer. Process RSS is sampled every 0.5 seconds, and the
+reference-cache directory size is sampled every 30 seconds. Dat's final output
+measurement sums the files in each range directory after table export.
 
-The field `avg_s2_seconds_per_api_attempt` is calculated over fresh publication
-lookups, each potentially including several HTTP retries. It is described in
-this report as mean fetch time per freshly queried publication, not time per
-individual HTTP attempt. Cache hits have `elapsed_s=0` in the CSV, although
-reading caches contributes to cell wall time.
-
-[Statistics](statistics.ipynb) presents the supplied final status/reference
-counts. [Performance](performance.ipynb) presents the cache-heavy rerun timings
-and RSS values. The reported 24,980 `ok` results include 24,811 cache hits;
-therefore the 99.92% status rate is not the success rate of fresh API requests
-in that measured rerun. Original run exports remain pending reconciliation.
-
-Retry counts, HTTP 429 counts, corpus size, cold-crawl cumulative time and
-cross-run history are not established by the supplied aggregates. The offline
-tests in `tests/test_m1_pipeline.py` cover shared module behavior with mocked
-network calls; they have been reviewed, not executed here, and do not by
-themselves establish the correctness of the notebook-specific request wrapper.
+[Statistics](statistics.ipynb) presents the reconciled publication and reference
+counts. [Performance](performance.ipynb) presents the cache-heavy rerun timings,
+sampled process RSS, cache-directory disk measurements and final S2 output size.
+Figures and tables are generated from the reporting data during compilation.

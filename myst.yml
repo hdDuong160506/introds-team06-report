@@ -17,11 +17,6 @@ project:
         - file: milestone1/performance.ipynb
           title: Performance
 
-    - file: milestone2/index.md
-      title: "Milestone 2: Parsing & Standardization"
-      children:
-        - file: milestone2/hierarchical_parsing.md
-        - file: milestone2/standardization.md
 
 site:
   template: book-theme

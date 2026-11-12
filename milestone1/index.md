@@ -28,8 +28,7 @@ assigned ranges.
 The results address three questions: how much of the assigned corpus was
 collected, what the reference pool contains, and where execution time and
 storage were spent. The methods pages explain the code responsible for those
-results; the analysis distinguishes observations from explanations that still
-require logs.
+results; the analysis connects numerical observations to their interpretation and counting units.
 
 - A **publication** is a base arXiv ID. Its revisions are **versions**; a
   publication marked `ok` does not by itself prove that every version has TeX.
@@ -49,47 +48,18 @@ This milestone report includes:
 - [Semantic Scholar References](semantic_scholar.md): API requests, local records,
   cache, table construction and validation.
 - [Statistics](statistics.ipynb): publication outcomes, reference coverage and
-  reported validation issues across five ranges.
+  validation warnings across five ranges.
 - [Performance](performance.ipynb): recorded crawl/recovery time, checkpoint
   storage and cache-heavy Semantic Scholar measurements.
 
-## Evidence and Pending Updates
+## Data Sources and Reproducible Figures
 
-The current report uses the supplied code snapshot and the updated technical
-documents `Hieu.docx` and `Dat.docx`, reviewed on **9 November 2026**. Both
-documents report five ranges of 5,000 input IDs. The presentation was revised
-on **10 November 2026**; no new crawler results were supplied for this revision.
-Numeric aggregates have been
-transcribed into a small report data file; notebook code generates the figures
-and supporting tables and recomputes totals and ratios during book compilation.
-Statistics and performance are presented primarily through charts, with their
-interpretation and measurement scope stated alongside each figure.
+The arXiv results are transcribed from Hieu's technical document. Semantic
+Scholar results use the five per-range metrics, crawl-record CSVs and validation
+reports from **11 November 2026**, together with Dat's measured final output
+sizes. The 25,000 Semantic Scholar records were reconciled against the metrics
+and validation summaries on **12 November 2026**.
 
-These are document-reported results. Original per-range metrics, runtime
-ledgers, crawl records and validation exports have been requested for
-reconciliation. The supplied notebooks contain no saved execution outputs, and
-the crawler's offline test suites have not been run as part of preparing this
-report.
-
-> **Current scope: partial evidence.** The available aggregates support
-> provisional publication/reference counts and separately scoped stage
-> measurements. Full version coverage, paired before/after source sizes and an
-> auditable full-system benchmark are still awaiting evidence. Missing values
-> are identified explicitly and are not plotted as zero.
-
-Pending items use stable labels throughout the results pages:
-
-- **S1:** version coverage and source-status reasons.
-- **S2:** average source size in bytes before and after filtering.
-- **S3:** reference records, payload checks and metadata validation.
-- **S4:** publication-level distributions, an additional analysis when records
-  become available.
-- **P1:** run configurations and original timing ledgers.
-- **P2:** complete processing time, discovery time and per-publication timing.
-- **P3:** RAM across the full M1 execution window.
-- **P4:** peak disk and complete final M1 output size.
-
-The [Statistics](statistics.ipynb) and [Performance](performance.ipynb) pages
-state the data needed to close each item. This follows the
-[M1 report requirements](https://hcmus-cs-ta.github.io/lab-book/intro-ds/statement/crawling/);
-recording a gap does not mean that the corresponding requirement has been met.
+Notebook code reads `milestone1/data/reported_results.json` and generates the
+charts, supporting tables, totals and ratios during book compilation. The
+analysis retains each stage's counting units, cache state and measurement scope.

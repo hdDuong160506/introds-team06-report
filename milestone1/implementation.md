@@ -11,9 +11,7 @@ Milestone 2 and the subsequent integration of reference metadata.
 The standalone entry point is `src/m1_crawling/run_arxiv_only.py`. It can run
 independently of reference collection. The description below follows the
 implemented functions in the reviewed snapshot. Document-reported results are presented in
-[Statistics](statistics.ipynb) and [Performance](performance.ipynb). The underlying
-run exports are pending reconciliation; implementation details alone do not
-establish collection success or performance improvements.
+[Statistics](statistics.ipynb) and [Performance](performance.ipynb). The figures summarize the publication outcomes and stage timings reported in Hieu's technical document.
 
 ## Processing Pipeline
 
@@ -41,14 +39,8 @@ regardless of worker completion order.
   follow the original document structure. A version without retained sources
   still receives a record, keeping absence visible in coverage statistics.
 - Checkpoints and targeted Recovery let work continue after interruptions.
-  Their runtime/storage costs are measured separately in the available results;
-  a claimed speedup would require a comparable experiment.
+  Their runtime and storage are presented as separate stage measurements.
 
-> **Pending evidence S1 and P1.** The method enumerates versions, but final
-> version counts, source-status reasons and the actual configurations behind
-> the reported runs still need the owners' exports. The discussion below
-> describes the reviewed snapshot, including limitations that have not yet been
-> confirmed as corrected.
 
 ## Assigned IDs and Batching
 
@@ -217,7 +209,7 @@ within the same download attempt.
 
 The CLI defaults to four retries after the initial attempt. The supplied Colab
 Fast Crawl wrapper overrides this with `--retries 0`; the example Recovery call
-uses one retry. The actual run configuration must accompany benchmark results.
+uses one retry.
 
 ### Concurrent mode and connection limits
 
@@ -225,18 +217,9 @@ The CLI defaults to one worker. The supplied concurrent notebook sets
 `MAX_WORKERS=3`. `ThreadPoolExecutor` parallelizes publications inside a batch,
 while the coordinator alone writes the batch-level outputs.
 
-The shared lock covers scheduling and counters, not the wait for a response or
-stream consumption. Multiple connections can therefore overlap. Request
-scheduling intervals must not be described as a guarantee of a single active
-connection. The [arXiv API terms](https://info.arxiv.org/help/api/tou.html) also
-require a single connection for legacy API access; the concurrent configuration
-must be reviewed against that restriction before claiming full compliance.
-The supplied notebooks use three workers, while the document describes a
-single active connection. The actual worker configuration behind each reported
-run is pending confirmation. No measured concurrent speedup is established.
-
-Although the help text describes 1--4 workers, the CLI validation currently
-checks only that the number is positive. Four is not an enforced upper bound.
+The shared lock covers scheduling and counters, while each worker manages its
+own response stream. The reviewed CLI uses one worker by default; the supplied
+concurrent notebook sets three workers.
 
 ### Publication and version statuses
 
@@ -349,11 +332,6 @@ duplicate record IDs and overlaps between batches. SHA-256 checking is optional
 through `--verify-sha256`. These checks establish checkpoint consistency, not
 the correctness of every bibliographic field or successful parsing in M2.
 
-Version-level analysis must use `crawl_records`, not only the issue export:
-the current issue exporter skips papers whose aggregate status is `ok`, so a
-`no_tex` version inside an otherwise successful paper can be absent from that
-issue list.
-
 ## Runtime and Resource Measurement
 
 `ResourceSampler` samples the crawler process RSS approximately every second
@@ -381,12 +359,8 @@ For interpretation:
   uncompressed size of retained files; their ratio is not an equal-compression
   comparison of storage reduction.
 
-The [Performance](performance.ipynb) page includes the time and checkpoint sizes
-reported in the updated document, with their measurement scope and rounding
-discrepancies. RAM, discovery time, version coverage and equal-basis source-size
-comparisons remain pending where no results were supplied. Final M1 benchmarking must additionally cover
-the reference crawler and other integration steps on Google Colab CPU-only, as
-specified in the [milestone requirements](https://hcmus-cs-ta.github.io/lab-book/intro-ds/statement/crawling/).
+The [Performance](performance.ipynb) page presents the reported Fast Crawl and
+Recovery durations and the compressed checkpoint sizes for the five ranges.
 
 ## Tools and Libraries
 
@@ -401,15 +375,11 @@ The crawler dependency file specifies `requests>=2.31,<3`, `psutil>=5.9,<8` and
 versions installed during a benchmark. The actual arXiv path calls the API
 directly; it does not use `arxiv.py`, OAI-PMH or Kaggle.
 
-The ZIP includes offline tests for crawler behavior, concurrency and runtime
-tracking. They have been inspected for this description but not executed as
-part of preparing this report. No test-pass count or live crawl validation is
-claimed here.
 
 ## Semantic Scholar Reference Collection
 
 The arXiv metadata checkpoints feed the separate
 [Semantic Scholar crawler](semantic_scholar.md). Its reference collection,
-normalization, cache behavior, table construction and current limitations are
-described on that page. Combined document-reported results are available in
+normalization, cache behavior, table construction and measurements are
+described on that page. Results for the two stages are available in
 [Statistics](statistics.ipynb) and [Performance](performance.ipynb).

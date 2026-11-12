@@ -95,15 +95,16 @@ def finish_figure(fig, name, description):
     plt.close(fig)
 
 
-def analysis(observation, interpretation, limitation):
+def analysis(observation, interpretation, scope=None):
     """Generate result commentary from the same aggregates as each figure."""
     from IPython.display import HTML, display
 
     paragraphs = []
     for label, value in (("Observation", observation),
                          ("Interpretation", interpretation),
-                         ("Limits", limitation)):
-        paragraphs.append(f"<p><strong>{label}.</strong> {escape(value)}</p>")
+                         ("Scope", scope)):
+        if value:
+            paragraphs.append(f"<p><strong>{label}.</strong> {escape(value)}</p>")
     display(HTML("\n".join(paragraphs)))
 
 
